@@ -40,7 +40,8 @@ def analyze_structure(file_bytes):
                     formula_cells += 1
 
                     # Broken External Links
-                    if '[' in val_str and ']' in val_str:
+                    has_external_link = '[' in val_str and ']' in val_str
+                    if has_external_link:
                         findings.append({
                             "severity": "info",
                             "sheet": sheet_name,
@@ -49,10 +50,13 @@ def analyze_structure(file_bytes):
                             "description": "Formula references an external workbook."
                         })
 
-                    # Missing Sheet references (rough regex check)
-                    sheet_refs = re.findall(r"'?[^'!]+'?!", val_str)
+                    # Missing Sheet references (case-insensitive, strips the trailing '!';
+                    # skipped for external-link formulas so their bracket syntax isn't
+                    # mis-parsed as a broken in-workbook sheet reference)
+                    sheet_names_upper = [s.upper() for s in wb.sheetnames]
+                    sheet_refs = re.findall(r"'?([A-Z0-9_ ]+)'?!", val_str) if not has_external_link else []
                     for ref in sheet_refs:
-                        if ref not in wb.sheetnames:
+                        if ref.upper() not in sheet_names_upper:
                             findings.append({
                                 "severity": "critical",
                                 "sheet": sheet_name,
