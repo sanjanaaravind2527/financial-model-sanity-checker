@@ -9,3 +9,5 @@ Financial models in Excel can contain errors that are difficult to spot manually
 
 
 **AI reasoning (Google Gemini)** — interprets those findings in business context, scores overall model health (0–100), and explains each issue in plain language with a suggested fix
+
+https://financial-model-sanity-checker-9hzapnmuajasourqgtb2sw.streamlit.app/
